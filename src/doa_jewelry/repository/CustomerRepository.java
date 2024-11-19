@@ -21,21 +21,20 @@ public class CustomerRepository extends MyCrudRepository<Customer> {
 
     @Override
     public Customer save(Customer customer) throws RepositoryException {
-        // Verifica se já existe um cliente com o mesmo NIF
+        // Verify if NIF already exists
         boolean nifExists = customers.stream()
                 .anyMatch(c -> c.getNif().equalsIgnoreCase(customer.getNif()));
         if (nifExists) {
-            throw new EntityAlreadyExistsException("Já existe um cliente com o NIF " + customer.getNif());
+            throw new EntityAlreadyExistsException("Customer with NIF " + customer.getNif() + " already exists.");
         }
 
         boolean emailExists = customers.stream()
                 .anyMatch(c -> c.getEmail().equalsIgnoreCase(customer.getEmail()));
         if (emailExists) {
-            throw new EntityAlreadyExistsException("Já existe um cliente com o email " + customer.getEmail());
+            throw new EntityAlreadyExistsException("Customer with email " + customer.getEmail() + " already exists.");
         }
 
         if (customer.getId() == null) {
-
             Long newId = customers.stream()
                     .mapToLong(c -> c.getId() != null ? c.getId() : 0L)
                     .max()
@@ -44,7 +43,6 @@ public class CustomerRepository extends MyCrudRepository<Customer> {
         }
 
         customers.add(customer);
-        saveToFile();
         return customer;
     }
 
@@ -58,10 +56,9 @@ public class CustomerRepository extends MyCrudRepository<Customer> {
             existingCustomer.setEmail(customer.getEmail());
             existingCustomer.setPhoneNumber(customer.getPhoneNumber());
             existingCustomer.setAddress(customer.getAddress());
-            saveToFile();
             return existingCustomer;
         } else {
-            throw new EntityNotFoundException("Cliente não encontrado com o ID: " + customer.getId());
+            throw new EntityNotFoundException("Customer not found with ID: " + customer.getId());
         }
     }
 
@@ -69,9 +66,8 @@ public class CustomerRepository extends MyCrudRepository<Customer> {
     public void deleteById(Long id) throws RepositoryException {
         boolean removed = customers.removeIf(c -> c.getId().equals(id));
         if (!removed) {
-            throw new EntityNotFoundException("Cliente não encontrado com o ID: " + id);
+            throw new EntityNotFoundException("Customer not found for ID: " + id);
         }
-        saveToFile();
     }
 
     @Override
@@ -84,6 +80,10 @@ public class CustomerRepository extends MyCrudRepository<Customer> {
         return customers.stream().filter(c -> c.getId().equals(id)).findFirst();
     }
 
+    public boolean existsById(Long id) {
+        return customers.stream().anyMatch(c -> c.getId().equals(id));
+    }
+
     private void loadFromFile() {
         File file = new File(FILE_PATH);
         if (!file.exists())
@@ -94,7 +94,7 @@ public class CustomerRepository extends MyCrudRepository<Customer> {
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
                 if (data.length < 6) {
-                    throw new RepositoryException("Formato de dados inválido em customer.csv");
+                    throw new RepositoryException("Invalid format for customer");
                 }
 
                 Long id = Long.parseLong(data[0]);
@@ -104,14 +104,14 @@ public class CustomerRepository extends MyCrudRepository<Customer> {
                         data[2], // nif
                         data[3], // email
                         data[4], // phoneNumber
-                        data[5] // address
+                        data[5]  // address
                 );
 
                 customer.setId(id);
                 customers.add(customer);
             }
         } catch (IOException | RepositoryException e) {
-            throw new RuntimeException("Erro ao carregar clientes do arquivo", e);
+            throw new RuntimeException("Error loading customers from CSV", e);
         }
     }
 
@@ -122,7 +122,7 @@ public class CustomerRepository extends MyCrudRepository<Customer> {
             if (parentDir != null && !parentDir.exists()) {
                 boolean dirCreated = parentDir.mkdirs();
                 if (!dirCreated) {
-                    throw new RepositoryException("Não foi possível criar o diretório para salvar os clientes.");
+                    throw new RepositoryException("Error creating directory for CSV file.");
                 }
             }
 
@@ -134,7 +134,12 @@ public class CustomerRepository extends MyCrudRepository<Customer> {
                 }
             }
         } catch (IOException e) {
-            throw new RepositoryException("Erro ao salvar clientes no arquivo", e);
+            throw new RepositoryException("Error saving customers to CSV", e);
         }
+    }
+
+    // Method to save all data
+    public void saveAll() throws RepositoryException {
+        saveToFile();
     }
 }

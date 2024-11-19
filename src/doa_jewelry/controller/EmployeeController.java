@@ -7,7 +7,12 @@ import doa_jewelry.service.EmployeeService;
 import java.util.List;
 
 public class EmployeeController {
-    private final EmployeeService employeeService = new EmployeeService();
+    private final EmployeeService employeeService;
+
+    // Constructor accepting the service instance
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
 
     public Employee createEmployee(Employee employee) {
         try {
@@ -50,6 +55,15 @@ public class EmployeeController {
         } catch (RepositoryException e) {
             System.err.println("Error updating employee: " + e.getMessage());
             return null;
+        }
+    }
+
+    // New method to save all employees
+    public void saveAll() {
+        try {
+            employeeService.saveAll();
+        } catch (RepositoryException e) {
+            System.err.println("Error saving employees: " + e.getMessage());
         }
     }
 }

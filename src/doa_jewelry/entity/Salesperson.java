@@ -3,12 +3,12 @@ package doa_jewelry.entity;
 import java.time.LocalDate;
 
 public class Salesperson extends Employee {
-    // Without id 
+    // Without id
     public Salesperson(String name, String nif, LocalDate hireDate, double salary) {
         super(name, nif, hireDate, salary);
     }
 
-    // With id 
+    // With id
     public Salesperson(Long id, String name, String nif, LocalDate hireDate, double salary) {
         super(name, nif, hireDate, salary);
         this.setId(id); // Setter from Employee
@@ -18,10 +18,10 @@ public class Salesperson extends Employee {
     public String toString() {
         return "Manager{" +
                 "ID=" + getId() +
-                ", Nome='" + getName() + '\'' +
+                ", Name='" + getName() + '\'' +
                 ", NIF='" + getNif() + '\'' +
-                ", Data de Contratação=" + getHireDate() +
-                ", Salário=" + getSalary() +
+                ", Hire date=" + getHireDate() +
+                ", Salary=" + getSalary() +
                 '}';
     }
 }

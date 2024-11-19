@@ -7,18 +7,10 @@ public abstract class Jewelry implements Entity<Long> {
     private double weight;
     private double price;
     private int stockQuantity;
-    private CategoryType category;
-
-    public enum MaterialType {
-        GOLD, SILVER, PLATINUM, DIAMOND
-    }
-
-    public enum CategoryType {
-        LUXURY, CASUAL
-    }
+    private JewelryCategory category;
 
     public Jewelry(String name, MaterialType material, double weight, double price, int stockQuantity,
-            CategoryType category) {
+            JewelryCategory category) {
         this.name = name;
         this.material = material;
         this.weight = weight;
@@ -41,8 +33,24 @@ public abstract class Jewelry implements Entity<Long> {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public MaterialType getMaterial() {
         return material;
+    }
+
+    public void setMaterial(MaterialType material) {
+        this.material = material;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 
     public double getWeight() {
@@ -57,11 +65,15 @@ public abstract class Jewelry implements Entity<Long> {
         return stockQuantity;
     }
 
-    public void setStockQuantity(int stockQuantity) {
-        this.stockQuantity = stockQuantity;
+    public JewelryCategory getCategory() {
+        return category;
     }
 
-    public CategoryType getCategory() {
-        return category;
+    public void setCategory(JewelryCategory category) {
+        this.category = category;
+    }
+
+    public void setStockQuantity(int stockQuantity) {
+        this.stockQuantity = stockQuantity;
     }
 }

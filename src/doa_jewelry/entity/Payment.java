@@ -7,17 +7,13 @@ public class Payment implements Entity<Long> {
     private double amount;
     private LocalDate date;
     private PaymentMethod method;
-    private Order order;
+    private Long orderId;
 
-    public enum PaymentMethod {
-        CREDIT_CARD, BANK_TRANSFER, CASH
-    }
-
-    public Payment(double amount, LocalDate date, PaymentMethod method, Order order) {
+    public Payment(double amount, LocalDate date, PaymentMethod method, Long orderId) {
         this.amount = amount;
         this.date = date;
         this.method = method;
-        this.order = order;
+        this.orderId = orderId;
     }
 
     // Getters and Setters
@@ -25,25 +21,43 @@ public class Payment implements Entity<Long> {
     public Long getId() {
         return id;
     }
-
     @Override
     public void setId(Long id) {
         this.id = id;
     }
-
     public double getAmount() {
         return amount;
     }
-
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
     public LocalDate getDate() {
         return date;
     }
-
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
     public PaymentMethod getMethod() {
         return method;
     }
+    public void setMethod(PaymentMethod method) {
+        this.method = method;
+    }
+    public Long getOrderId() {
+        return orderId;
+    }
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
 
-    public Order getOrder() {
-        return order;
+    @Override
+    public String toString() {
+        return "Payments{" +
+                "id=" + id +
+                ", amount='" + amount + '\'' +
+                ", date='" + date + '\'' +
+                ", method='" + method + '\'' +
+                ", orderId='" + orderId + '\'' +
+                '}';
     }
 }

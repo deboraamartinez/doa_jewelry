@@ -7,7 +7,11 @@ import doa_jewelry.service.CustomerService;
 import java.util.List;
 
 public class CustomerController {
-    private final CustomerService customerService = new CustomerService();
+    private final CustomerService customerService;
+
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
 
     public Customer createCustomer(Customer customer) {
         try {
@@ -50,6 +54,15 @@ public class CustomerController {
         } catch (RepositoryException e) {
             System.err.println("Error updating customer: " + e.getMessage());
             return null;
+        }
+    }
+
+    // Method to save all customers
+    public void saveAll() {
+        try {
+            customerService.saveAll();
+        } catch (RepositoryException e) {
+            System.err.println("Error saving customers: " + e.getMessage());
         }
     }
 }

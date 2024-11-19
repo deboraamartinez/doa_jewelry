@@ -27,7 +27,7 @@ public class EmployeeRepository extends MyCrudRepository<Employee> {
         boolean nifExists = employees.stream()
                 .anyMatch(e -> e.getNif().equalsIgnoreCase(employee.getNif()));
         if (nifExists) {
-            throw new EntityAlreadyExistsException("Já existe um funcionário com o NIF " + employee.getNif());
+            throw new EntityAlreadyExistsException("Employee with NIF " + employee.getNif() + " already exists.");
         }
         if (employee.getId() == null) {
             Long newId = employees.stream()
@@ -38,14 +38,13 @@ public class EmployeeRepository extends MyCrudRepository<Employee> {
         }
 
         employees.add(employee);
-        saveToFile();
         return employee;
     }
 
     @Override
     public Employee update(Employee employee) throws RepositoryException {
         if (employee.getId() == null) {
-            throw new RepositoryException("O ID do funcionário não pode ser nulo para atualização.");
+            throw new RepositoryException("The ID cannot be null for updating an employee.");
         }
 
         Optional<Employee> existingEmployeeOpt = findById(employee.getId());
@@ -60,15 +59,14 @@ public class EmployeeRepository extends MyCrudRepository<Employee> {
             if (existingEmployee instanceof Manager && employee instanceof Manager) {
                 ((Manager) existingEmployee).setSalesGoal(((Manager) employee).getSalesGoal());
             } else if (existingEmployee instanceof Salesperson && employee instanceof Salesperson) {
-                // ((Salesperson) existingEmployee).setSomeField(((Salesperson) employee).getSomeField());
+                // Update specific fields for Salesperson if any
             } else {
-                throw new RepositoryException("Tipo de funcionário não corresponde ao existente.");
+                throw new RepositoryException("Employee type does not match the existing one.");
             }
 
-            saveToFile();
             return existingEmployee;
         } else {
-            throw new EntityNotFoundException("Funcionário não encontrado com o ID: " + employee.getId());
+            throw new EntityNotFoundException("Employee not found with ID: " + employee.getId());
         }
     }
 
@@ -77,9 +75,8 @@ public class EmployeeRepository extends MyCrudRepository<Employee> {
         Optional<Employee> employeeOpt = findById(id);
         if (employeeOpt.isPresent()) {
             employees.remove(employeeOpt.get());
-            saveToFile();
         } else {
-            throw new EntityNotFoundException("Funcionário não encontrado com o ID: " + id);
+            throw new EntityNotFoundException("Employee not found with ID: " + id);
         }
     }
 
@@ -95,14 +92,15 @@ public class EmployeeRepository extends MyCrudRepository<Employee> {
 
     private void loadFromFile() {
         File file = new File(FILE_PATH);
-        if (!file.exists()) return;
+        if (!file.exists())
+            return;
 
         try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
                 if (data.length < 6) {
-                    throw new RuntimeException("Dados insuficientes na linha: " + line);
+                    throw new RuntimeException("Insufficient data in line: " + line);
                 }
 
                 String type = data[0].trim();
@@ -116,23 +114,23 @@ public class EmployeeRepository extends MyCrudRepository<Employee> {
                 switch (type.toLowerCase()) {
                     case "manager":
                         if (data.length < 7) {
-                            throw new RuntimeException("Dados insuficientes para Manager na linha: " + line);
+                            throw new RuntimeException("Insufficient data for Manager in line: " + line);
                         }
                         double salesGoal = Double.parseDouble(data[6].trim());
                         employee = new Manager(id, name, nif, hireDate, salary, salesGoal);
                         break;
                     case "salesperson":
                         employee = new Salesperson(id, name, nif, hireDate, salary);
-                        // Se Salesperson tiver campos específicos, parse e configure-os aqui
+                        // Parse and set specific fields for Salesperson if any
                         break;
                     default:
-                        throw new RuntimeException("Tipo desconhecido de funcionário: " + type);
+                        throw new RuntimeException("Unknown employee type: " + type);
                 }
 
                 employees.add(employee);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Erro ao carregar funcionários do arquivo", e);
+            throw new RuntimeException("Error loading employees from file", e);
         }
     }
 
@@ -156,7 +154,12 @@ public class EmployeeRepository extends MyCrudRepository<Employee> {
                 bw.newLine();
             }
         } catch (IOException e) {
-            throw new RepositoryException("Erro ao salvar funcionários no arquivo", e);
+            throw new RepositoryException("Error saving employees to file", e);
         }
+    }
+
+    // Public method to save all data
+    public void saveAll() throws RepositoryException {
+        saveToFile();
     }
 }

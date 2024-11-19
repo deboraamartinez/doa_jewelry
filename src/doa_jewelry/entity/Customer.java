@@ -37,7 +37,6 @@ public class Customer implements Entity<Long> {
         this.name = name;
     }
 
-    // Getter e Setter para 'nif'
     public String getNif() {
         return nif;
     }
