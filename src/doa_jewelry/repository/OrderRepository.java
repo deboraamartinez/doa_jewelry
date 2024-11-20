@@ -52,7 +52,6 @@ public class OrderRepository extends MyCrudRepository<Order> {
             existingOrder.setItems(order.getItems());
             existingOrder.setTotalAmount(order.getTotalAmount());
             existingOrder.setStatus(order.getStatus());
-
             return existingOrder;
         } else {
             throw new EntityNotFoundException("Order not found with ID: " + order.getId());

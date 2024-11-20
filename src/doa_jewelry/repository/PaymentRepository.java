@@ -50,7 +50,6 @@ public class PaymentRepository extends MyCrudRepository<Payment> {
             existingPayment.setDate(payment.getDate());
             existingPayment.setMethod(payment.getMethod());
             existingPayment.setOrderId(payment.getOrderId());
-
             return existingPayment;
         } else {
             throw new EntityNotFoundException("Payment not found with ID: " + payment.getId());
@@ -142,5 +141,6 @@ public class PaymentRepository extends MyCrudRepository<Payment> {
     public void deleteAll() {
         payments.clear();
         saveToFile();
+
     }
 }

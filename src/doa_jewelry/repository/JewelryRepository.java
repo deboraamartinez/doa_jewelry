@@ -49,6 +49,7 @@ public class JewelryRepository extends MyCrudRepository<Jewelry> {
         if (existingJewelryOpt.isPresent()) {
             Jewelry existingJewelry = existingJewelryOpt.get();
 
+
             // Update basic properties
             existingJewelry.setName(jewelry.getName());
             existingJewelry.setMaterial(jewelry.getMaterial());
