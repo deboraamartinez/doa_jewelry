@@ -23,4 +23,17 @@ public class Earring extends Jewelry {
     public void setClaspType(String claspType) {
         this.claspType = claspType;
     }
+
+    public String toString() {
+        return "Earring{" +
+                "ID=" + getId() +
+                ", Name='" + getName() + '\'' +
+                ", Material='" + getMaterial() + '\'' +
+                ", Weight=" + getWeight() +
+                ", Price=" + getPrice() +
+                ", Stock=" + getStockQuantity() +
+                ", Category=" + getCategory() +
+                ", ClaspType=" + getClaspType() +
+                '}';
+    }
 }

@@ -23,4 +23,17 @@ public class Ring extends Jewelry {
     public void setSize(double size) {
         this.size = size;
     }
+
+    public String toString() {
+        return "Ring{" +
+                "ID=" + getId() +
+                ", Name='" + getName() + '\'' +
+                ", Material='" + getMaterial() + '\'' +
+                ", Weight=" + getWeight() +
+                ", Price=" + getPrice() +
+                ", Stock=" + getStockQuantity() +
+                ", Category=" + getCategory() +
+                ", Size=" + getSize() +
+                '}';
+    }
 }

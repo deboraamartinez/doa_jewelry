@@ -5,7 +5,6 @@ import java.time.LocalDate;
 public class Manager extends Employee {
     private double salesGoal;
 
-    // Construtor sem ID (para criação de novos managers)
     public Manager(String name, String nif, LocalDate hireDate, double salary, double salesGoal) {
         super(name, nif, hireDate, salary);
         this.salesGoal = salesGoal;
