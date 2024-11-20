@@ -57,7 +57,6 @@ public class CustomerController {
         }
     }
 
-    // Method to save all customers
     public void saveAll() {
         try {
             customerService.saveAll();

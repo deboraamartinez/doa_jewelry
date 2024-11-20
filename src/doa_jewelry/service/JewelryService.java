@@ -33,7 +33,6 @@ public class JewelryService {
     }
 
     public void deleteJewelry(Long id) throws RepositoryException {
-        // Check if jewelry is part of any orders
         boolean isInOrders = orderRepository.findAll().stream()
                 .anyMatch(order -> order.getItems().stream()
                         .anyMatch(item -> item.getJewelryId().equals(id)));

@@ -57,7 +57,6 @@ public class PaymentController {
         }
     }
 
-    // Method to save all payments
     public void saveAll() {
         try {
             paymentService.saveAll();

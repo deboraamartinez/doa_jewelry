@@ -59,7 +59,6 @@ public class EmployeeRepository extends MyCrudRepository<Employee> {
             if (existingEmployee instanceof Manager && employee instanceof Manager) {
                 ((Manager) existingEmployee).setSalesGoal(((Manager) employee).getSalesGoal());
             } else if (existingEmployee instanceof Salesperson && employee instanceof Salesperson) {
-                // Update specific fields for Salesperson if any
             } else {
                 throw new RepositoryException("Employee type does not match the existing one.");
             }
@@ -121,7 +120,7 @@ public class EmployeeRepository extends MyCrudRepository<Employee> {
                         break;
                     case "salesperson":
                         employee = new Salesperson(id, name, nif, hireDate, salary);
-                        // Parse and set specific fields for Salesperson if any
+                    
                         break;
                     default:
                         throw new RuntimeException("Unknown employee type: " + type);
@@ -158,8 +157,12 @@ public class EmployeeRepository extends MyCrudRepository<Employee> {
         }
     }
 
-    // Public method to save all data
     public void saveAll() throws RepositoryException {
         saveToFile();
+    }
+
+    public void deleteAll() {
+        employees.clear();
+        saveToFile(); 
     }
 }

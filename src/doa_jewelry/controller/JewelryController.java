@@ -57,7 +57,6 @@ public class JewelryController {
         }
     }
 
-    // Method to save all jewelry
     public void saveAll() {
         try {
             jewelryService.saveAll();

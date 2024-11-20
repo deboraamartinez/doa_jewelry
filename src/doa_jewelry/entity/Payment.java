@@ -16,7 +16,6 @@ public class Payment implements Entity<Long> {
         this.orderId = orderId;
     }
 
-    // Getters and Setters
     @Override
     public Long getId() {
         return id;

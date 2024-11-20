@@ -31,7 +31,6 @@ public class OrderRepository extends MyCrudRepository<Order> {
         }
 
         orders.add(order);
-        // Removed saveToFile() call
         return order;
     }
 
@@ -45,7 +44,6 @@ public class OrderRepository extends MyCrudRepository<Order> {
             existingOrder.setItems(order.getItems());
             existingOrder.setTotalAmount(order.getTotalAmount());
             existingOrder.setStatus(order.getStatus());
-            // Removed saveToFile() call
             return existingOrder;
         } else {
             throw new EntityNotFoundException("Order not found with ID: " + order.getId());
@@ -57,7 +55,6 @@ public class OrderRepository extends MyCrudRepository<Order> {
         Order order = findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found with ID: " + id));
         orders.remove(order);
-        // Removed saveToFile() call
     }
 
     @Override
@@ -136,8 +133,12 @@ public class OrderRepository extends MyCrudRepository<Order> {
         }
     }
 
-    // New method to save all data
     public void saveAll() throws RepositoryException {
         saveToFile();
+    }
+
+    public void deleteAll() {
+        orders.clear();
+        saveToFile(); 
     }
 }

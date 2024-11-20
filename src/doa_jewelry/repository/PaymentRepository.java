@@ -29,7 +29,6 @@ public class PaymentRepository extends MyCrudRepository<Payment> {
             throw new EntityAlreadyExistsException("Payment already exists with ID: " + payment.getId());
         }
         payments.add(payment);
-        // Removed saveToFile() call
         return payment;
     }
 
@@ -42,7 +41,6 @@ public class PaymentRepository extends MyCrudRepository<Payment> {
             existingPayment.setDate(payment.getDate());
             existingPayment.setMethod(payment.getMethod());
             existingPayment.setOrderId(payment.getOrderId());
-            // Removed saveToFile() call
             return existingPayment;
         } else {
             throw new EntityNotFoundException("Payment not found with ID: " + payment.getId());
@@ -54,7 +52,6 @@ public class PaymentRepository extends MyCrudRepository<Payment> {
         Payment payment = findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Payment not found with ID: " + id));
         payments.remove(payment);
-        // Removed saveToFile() call
     }
 
     @Override
@@ -119,8 +116,12 @@ public class PaymentRepository extends MyCrudRepository<Payment> {
         }
     }
 
-    // New method to save all data
+
     public void saveAll() throws RepositoryException {
         saveToFile();
+    }
+    public void deleteAll() {
+        payments.clear();
+        saveToFile(); 
     }
 }

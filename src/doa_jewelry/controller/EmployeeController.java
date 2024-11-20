@@ -9,7 +9,6 @@ import java.util.List;
 public class EmployeeController {
     private final EmployeeService employeeService;
 
-    // Constructor accepting the service instance
     public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
@@ -58,7 +57,6 @@ public class EmployeeController {
         }
     }
 
-    // New method to save all employees
     public void saveAll() {
         try {
             employeeService.saveAll();

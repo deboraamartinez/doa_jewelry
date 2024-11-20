@@ -29,7 +29,6 @@ public class JewelryRepository extends MyCrudRepository<Jewelry> {
             jewelry.setId(newId);
         }
         jewelries.add(jewelry);
-        // Removed saveToFile() call
         return jewelry;
     }
 
@@ -43,7 +42,6 @@ public class JewelryRepository extends MyCrudRepository<Jewelry> {
         if (existingJewelryOpt.isPresent()) {
             Jewelry existingJewelry = existingJewelryOpt.get();
 
-            // Update common fields
             existingJewelry.setName(jewelry.getName());
             existingJewelry.setMaterial(jewelry.getMaterial());
             existingJewelry.setWeight(jewelry.getWeight());
@@ -51,7 +49,6 @@ public class JewelryRepository extends MyCrudRepository<Jewelry> {
             existingJewelry.setStockQuantity(jewelry.getStockQuantity());
             existingJewelry.setCategory(jewelry.getCategory());
 
-            // Update subclass-specific fields
             if (existingJewelry instanceof Necklace && jewelry instanceof Necklace) {
                 ((Necklace) existingJewelry).setLength(((Necklace) jewelry).getLength());
             } else if (existingJewelry instanceof Ring && jewelry instanceof Ring) {
@@ -175,8 +172,13 @@ public class JewelryRepository extends MyCrudRepository<Jewelry> {
         }
     }
 
-    // New method to save all data
     public void saveAll() throws RepositoryException {
         saveToFile();
     }
+
+    public void deleteAll() {
+        jewelries.clear();
+        saveToFile();
+    }
+
 }

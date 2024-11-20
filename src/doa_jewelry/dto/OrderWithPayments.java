@@ -14,7 +14,6 @@ public class OrderWithPayments {
         this.payments = payments;
     }
 
-    // Getters and Setters
 
     public Order getOrder() {
         return order;
