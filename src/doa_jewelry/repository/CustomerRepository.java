@@ -21,7 +21,7 @@ public class CustomerRepository extends MyCrudRepository<Customer> {
 
     @Override
     public Customer save(Customer customer) throws RepositoryException {
-        // Verify if NIF already exists
+
         boolean nifExists = customers.stream()
                 .anyMatch(c -> c.getNif().equalsIgnoreCase(customer.getNif()));
         if (nifExists) {
@@ -138,8 +138,13 @@ public class CustomerRepository extends MyCrudRepository<Customer> {
         }
     }
 
-    // Method to save all data
     public void saveAll() throws RepositoryException {
         saveToFile();
     }
+
+    public void deleteAll() {
+        customers.clear();
+        saveToFile();
+    }
+
 }

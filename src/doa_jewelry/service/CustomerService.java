@@ -31,7 +31,6 @@ public class CustomerService {
     }
 
     public void deleteCustomer(Long id) throws RepositoryException {
-        // Before deleting the customer, delete all associated orders
         List<Order> orders = orderService.getOrdersByCustomerId(id);
         for (Order order : orders) {
             orderService.deleteOrder(order.getId());
@@ -43,7 +42,6 @@ public class CustomerService {
         return customerRepository.update(customer);
     }
 
-    // Method to save all customers
     public void saveAll() throws RepositoryException {
         customerRepository.saveAll();
     }

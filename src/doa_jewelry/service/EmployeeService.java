@@ -9,7 +9,6 @@ import java.util.List;
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
 
-    // Constructor accepting the repository instance
     public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
@@ -35,7 +34,6 @@ public class EmployeeService {
         return employeeRepository.update(employee);
     }
 
-    // New method to save all employees
     public void saveAll() throws RepositoryException {
         employeeRepository.saveAll();
     }

@@ -27,26 +27,20 @@ public class PaymentService {
         Order order = orderRepository.findById(payment.getOrderId())
                 .orElseThrow(() -> new EntityNotFoundException("Order not found with ID: " + payment.getOrderId()));
 
-        // Calculate the total amount already paid
         double totalPaid = getTotalPaidForOrder(payment.getOrderId());
 
-        // Check if the new payment would exceed the order's total amount
         if (totalPaid + payment.getAmount() > order.getTotalAmount()) {
             throw new InvalidPaymentException("Payment exceeds the order's total amount.");
         }
 
-        // Save payment
         Payment savedPayment = paymentRepository.save(payment);
 
-        // Recalculate total paid after saving the new payment
         totalPaid += payment.getAmount();
 
-        // Update order's status if total paid equals total amount
         if (totalPaid >= order.getTotalAmount()) {
             order.setStatus(OrderStatus.ACCEPTED);
         }
 
-        // Update order in repository
         orderRepository.update(order);
 
         return savedPayment;
