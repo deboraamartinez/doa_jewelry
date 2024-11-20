@@ -12,33 +12,41 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+// Repository for managing order data, including persistence to a CSV file
 public class OrderRepository extends MyCrudRepository<Order> {
 
-    private static final String FILE_PATH = "data/orders.csv";
-    private final List<Order> orders = new ArrayList<>();
+    private static final String FILE_PATH = "data/orders.csv"; // Path to the CSV file
+    private final List<Order> orders = new ArrayList<>(); // In-memory list of orders
 
+    // Constructor that loads orders from the CSV file into memory
     public OrderRepository() {
         loadFromFile();
     }
 
     @Override
     public Order save(Order order) throws RepositoryException {
+        // Assign a new ID if the order doesn't have one
         if (order.getId() == null) {
             Long newId = generateNewId();
             order.setId(newId);
         } else if (existsById(order.getId())) {
+            // Check if the order ID already exists
             throw new EntityAlreadyExistsException("Order already exists with ID: " + order.getId());
         }
 
+        // Add the order to the in-memory list
         orders.add(order);
         return order;
     }
 
     @Override
     public Order update(Order order) throws RepositoryException {
+        // Find the existing order by ID
         Optional<Order> existingOrderOpt = findById(order.getId());
         if (existingOrderOpt.isPresent()) {
             Order existingOrder = existingOrderOpt.get();
+
+            // Update the order properties
             existingOrder.setCustomerId(order.getCustomerId());
             existingOrder.setDate(order.getDate());
             existingOrder.setItems(order.getItems());
@@ -52,6 +60,7 @@ public class OrderRepository extends MyCrudRepository<Order> {
 
     @Override
     public void deleteById(Long id) throws RepositoryException {
+        // Find the order by ID and remove it
         Order order = findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found with ID: " + id));
         orders.remove(order);
@@ -59,14 +68,17 @@ public class OrderRepository extends MyCrudRepository<Order> {
 
     @Override
     public List<Order> findAll() {
+        // Return a copy of the in-memory list to prevent external modifications
         return new ArrayList<>(orders);
     }
 
     @Override
     public Optional<Order> findById(Long id) {
+        // Find an order by its ID
         return orders.stream().filter(o -> o.getId().equals(id)).findFirst();
     }
 
+    // Generate a new unique ID for an order
     public Long generateNewId() {
         return orders.stream()
                 .mapToLong(o -> o.getId() != null ? o.getId() : 0L)
@@ -74,10 +86,10 @@ public class OrderRepository extends MyCrudRepository<Order> {
                 .orElse(0L) + 1;
     }
 
+    // Load orders from the CSV file into the in-memory list
     private void loadFromFile() {
         File file = new File(FILE_PATH);
-        if (!file.exists())
-            return;
+        if (!file.exists()) return;
 
         try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
@@ -87,12 +99,14 @@ public class OrderRepository extends MyCrudRepository<Order> {
                     throw new RuntimeException("Insufficient data in line: " + line);
                 }
 
+                // Parse the basic order data
                 Long id = Long.parseLong(data[0].trim());
                 Long customerId = Long.parseLong(data[1].trim());
                 LocalDate date = LocalDate.parse(data[2].trim());
                 OrderStatus status = OrderStatus.valueOf(data[3].trim().toUpperCase());
                 double totalAmount = Double.parseDouble(data[4].trim());
 
+                // Parse the order items
                 List<Order.Item> items = new ArrayList<>();
                 for (int i = 5; i < data.length; i += 2) {
                     if (i + 1 >= data.length) {
@@ -103,6 +117,7 @@ public class OrderRepository extends MyCrudRepository<Order> {
                     items.add(new Order.Item(jewelryId, quantity));
                 }
 
+                // Create the order object and add it to the list
                 Order order = new Order(id, customerId, date, items, totalAmount, status);
                 orders.add(order);
             }
@@ -111,6 +126,7 @@ public class OrderRepository extends MyCrudRepository<Order> {
         }
     }
 
+    // Save all orders from the in-memory list to the CSV file
     private void saveToFile() throws RepositoryException {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Order order : orders) {
@@ -121,6 +137,7 @@ public class OrderRepository extends MyCrudRepository<Order> {
                         .append(order.getStatus().name()).append(",")
                         .append(order.getTotalAmount());
 
+                // Append the items to the line
                 for (Order.Item item : order.getItems()) {
                     sb.append(",").append(item.getJewelryId()).append(",").append(item.getQuantity());
                 }
@@ -133,12 +150,14 @@ public class OrderRepository extends MyCrudRepository<Order> {
         }
     }
 
+    // Save all orders to the CSV file
     public void saveAll() throws RepositoryException {
         saveToFile();
     }
 
+    // Delete all orders and clear the CSV file
     public void deleteAll() {
         orders.clear();
-        saveToFile(); 
+        saveToFile();
     }
 }

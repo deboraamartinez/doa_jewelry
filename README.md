@@ -10,7 +10,7 @@ This is a Java-based management system for a jewelry store. It allows managing c
 - **Order Processing**: Create orders for customers, manage order items, and track order statuses.
 - **Payment Handling**: Process payments for orders, ensuring payments do not exceed order totals.
 - **Data Persistence**: All data is stored in CSV files for simplicity and ease of access.
-- TODO -  **Unit Testing**: Comprehensive unit tests using JUnit to ensure code reliability.
+- **Unit Testing**: Comprehensive unit tests using JUnit to ensure code reliability.
 
 ### Project Structure
 

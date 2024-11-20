@@ -10,17 +10,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+// Repository for managing jewelry data, including persistence to a CSV file
 public class JewelryRepository extends MyCrudRepository<Jewelry> {
 
-    private static final String FILE_PATH = "data/jewelry.csv";
-    private final List<Jewelry> jewelries = new ArrayList<>();
+    private static final String FILE_PATH = "data/jewelry.csv"; // Path to the CSV file
+    private final List<Jewelry> jewelries = new ArrayList<>(); // In-memory list of jewelry items
 
+    // Constructor loads jewelry data from the CSV file into memory
     public JewelryRepository() {
         loadFromFile();
     }
 
     @Override
     public Jewelry save(Jewelry jewelry) throws RepositoryException {
+        // Assign a new ID if the jewelry item doesn't have one
         if (jewelry.getId() == null) {
             Long newId = jewelries.stream()
                     .mapToLong(j -> j.getId() != null ? j.getId() : 0L)
@@ -28,20 +31,26 @@ public class JewelryRepository extends MyCrudRepository<Jewelry> {
                     .orElse(0L) + 1;
             jewelry.setId(newId);
         }
+
+        // Add the jewelry item to the in-memory list
         jewelries.add(jewelry);
         return jewelry;
     }
 
     @Override
     public Jewelry update(Jewelry jewelry) throws RepositoryException {
+        // Ensure the jewelry ID is not null
         if (jewelry.getId() == null) {
             throw new RepositoryException("Jewelry ID cannot be null for update.");
         }
 
+        // Find the existing jewelry item by ID
         Optional<Jewelry> existingJewelryOpt = findById(jewelry.getId());
         if (existingJewelryOpt.isPresent()) {
             Jewelry existingJewelry = existingJewelryOpt.get();
 
+
+            // Update basic properties
             existingJewelry.setName(jewelry.getName());
             existingJewelry.setMaterial(jewelry.getMaterial());
             existingJewelry.setWeight(jewelry.getWeight());
@@ -49,6 +58,7 @@ public class JewelryRepository extends MyCrudRepository<Jewelry> {
             existingJewelry.setStockQuantity(jewelry.getStockQuantity());
             existingJewelry.setCategory(jewelry.getCategory());
 
+            // Update specific properties based on the type of jewelry
             if (existingJewelry instanceof Necklace && jewelry instanceof Necklace) {
                 ((Necklace) existingJewelry).setLength(((Necklace) jewelry).getLength());
             } else if (existingJewelry instanceof Ring && jewelry instanceof Ring) {
@@ -59,7 +69,6 @@ public class JewelryRepository extends MyCrudRepository<Jewelry> {
                 throw new RepositoryException("Jewelry type does not match the existing one.");
             }
 
-            // Removed saveToFile() call
             return existingJewelry;
         } else {
             throw new EntityNotFoundException("Jewelry not found with ID: " + jewelry.getId());
@@ -68,26 +77,28 @@ public class JewelryRepository extends MyCrudRepository<Jewelry> {
 
     @Override
     public void deleteById(Long id) throws RepositoryException {
+        // Find and remove the jewelry item by ID
         Jewelry jewelry = findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Jewelry not found with ID: " + id));
         jewelries.remove(jewelry);
-        // Removed saveToFile() call
     }
 
     @Override
     public List<Jewelry> findAll() {
+        // Return a copy of the in-memory list to prevent external modifications
         return new ArrayList<>(jewelries);
     }
 
     @Override
     public Optional<Jewelry> findById(Long id) {
+        // Find a jewelry item by its ID
         return jewelries.stream().filter(j -> j.getId().equals(id)).findFirst();
     }
 
+    // Load jewelry data from the CSV file into memory
     private void loadFromFile() {
         File file = new File(FILE_PATH);
-        if (!file.exists())
-            return;
+        if (!file.exists()) return;
 
         try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
@@ -97,6 +108,7 @@ public class JewelryRepository extends MyCrudRepository<Jewelry> {
                     throw new RuntimeException("Insufficient data in line: " + line);
                 }
 
+                // Parse basic jewelry data
                 String type = data[0].trim();
                 Long id = Long.parseLong(data[1].trim());
                 String name = data[2].trim();
@@ -106,6 +118,7 @@ public class JewelryRepository extends MyCrudRepository<Jewelry> {
                 int stockQuantity = Integer.parseInt(data[6].trim());
                 JewelryCategory category = JewelryCategory.valueOf(data[7].trim().toUpperCase());
 
+                // Create the appropriate jewelry object based on the type
                 Jewelry jewelry;
                 switch (type.toLowerCase()) {
                     case "necklace":
@@ -140,6 +153,7 @@ public class JewelryRepository extends MyCrudRepository<Jewelry> {
         }
     }
 
+    // Save all jewelry data from memory to the CSV file
     private void saveToFile() throws RepositoryException {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Jewelry jewelry : jewelries) {
@@ -153,15 +167,13 @@ public class JewelryRepository extends MyCrudRepository<Jewelry> {
                         .append(jewelry.getStockQuantity()).append(",")
                         .append(jewelry.getCategory().name());
 
+                // Append additional fields based on jewelry type
                 if (jewelry instanceof Necklace) {
-                    Necklace necklace = (Necklace) jewelry;
-                    sb.append(",").append(necklace.getLength());
+                    sb.append(",").append(((Necklace) jewelry).getLength());
                 } else if (jewelry instanceof Ring) {
-                    Ring ring = (Ring) jewelry;
-                    sb.append(",").append(ring.getSize());
+                    sb.append(",").append(((Ring) jewelry).getSize());
                 } else if (jewelry instanceof Earring) {
-                    Earring earring = (Earring) jewelry;
-                    sb.append(",").append(earring.getClaspType());
+                    sb.append(",").append(((Earring) jewelry).getClaspType());
                 }
 
                 bw.write(sb.toString());
@@ -172,13 +184,14 @@ public class JewelryRepository extends MyCrudRepository<Jewelry> {
         }
     }
 
+    // Save all jewelry items to the CSV file
     public void saveAll() throws RepositoryException {
         saveToFile();
     }
 
+    // Clear all jewelry data and save an empty CSV file
     public void deleteAll() {
         jewelries.clear();
         saveToFile();
     }
-
 }
