@@ -1,4 +1,4 @@
-## Jewelry Store Management System
+## Jewelry Store Management System For DOA Master's class
 
 This is a Java-based management system for a jewelry store. It allows managing customers, employees, jewelry inventory, orders, and payments. The system persists data in CSV files and ensures data integrity with validations and exception handling.
 
