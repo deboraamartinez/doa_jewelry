@@ -44,10 +44,10 @@ The project follows a layered architecture with clear separation of concerns:
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/seu-usuario/deoroatelier-store.git 
+   git clone https://github.com/deboraamartinez/doa_jewelry/tree/PROJECT3
 2. **Access the project folder:**:
     ```bash
-    cd deoroatelier-store
+    cd spring/doajewelry
 3. **Run the container:**:
     ```bash
     docker compose up --build
